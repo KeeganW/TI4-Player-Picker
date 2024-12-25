@@ -1013,8 +1013,9 @@ class MapOptions extends React.Component {
         // Get all anomalies
         let allTrueAnomalies = tileData.anomaly.filter(expansionCheck(includedExpansions));
 
-        let newTileAnomalies = newTiles.filter(systemID => tileData.all[systemID] !== undefined).filter(systemID => tileData.all[systemID].anomaly.length > 0)
-        let newTileAnomaliesWithAdjacentAnomalies = []
+        let newTileAnomalies = newTiles.filter(systemID => tileData.all[systemID] !== undefined)
+           .filter(systemID => tileData.all[systemID].anomaly.length > 0 && tileData.all[systemID].type !== 'green')
+         let newTileAnomaliesWithAdjacentAnomalies = []
 
         // Get all wormholes currently on map
 
