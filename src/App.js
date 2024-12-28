@@ -577,8 +577,8 @@ class App extends React.Component {
             (id) => (!tileData.pok.includes(id) || includedExpansions[EXPANSIONS.POK]) && (!tileData.uncharted.includes(id) || includedExpansions[EXPANSIONS.UnS]) && (!tileData.sun.includes(id) || includedExpansions[EXPANSIONS.AS]) && (!tileData.asyncLanes.includes(id) || includedExpansions[EXPANSIONS.Async])
         )
 
-        systemNumbers = systemNumbers.concat(tileData.blue).concat(tileData.red).filter(expansionCheck(this.state.includedExpansions));
-
+        systemNumbers = systemNumbers.concat(tileData.blue).concat(tileData.red).concat(tileData.green).filter(expansionCheck(this.state.includedExpansions));
+        
         if (this.state.customMapBuilding) {
             systemNumbers = [-1].concat(systemNumbers.concat(tileData.hyperlanes));
         }
@@ -746,6 +746,21 @@ class App extends React.Component {
             rotatedTileArray.push(tilesOverride[56] ?? this.state.tiles[56]);
         }
 
+        /* Issue #131
+        Remove duplication from the list
+        Duplicates can occur during small map sizes
+        This leads to invalid maps */
+        for ( var i = 0; i < rotatedTileArray.length; i++ ) {
+            for ( var j = i + 1; j < rotatedTileArray.length; j++ ) {
+                if ((rotatedTileArray[i] && rotatedTileArray[j]) && 
+                    (rotatedTileArray[i].toString().split('-')[0] ===
+                    rotatedTileArray[j].toString().split('-')[0])) {
+                        rotatedTileArray[j] = undefined;
+                    }
+            }
+        }
+        console.log(rotatedTileArray);
+
         return rotatedTileArray;
     }
 
@@ -779,6 +794,8 @@ class App extends React.Component {
      * Returns a rotated version of the current map.
      */
     generateRotatedMap(rotations = 1) {
+        console.log("Initial map");
+        console.log(this.state.tiles);
         let rotatedTileArray = [];
 
         // Rotate the hex grid the required number of times.
@@ -789,12 +806,15 @@ class App extends React.Component {
             } else {
                 // Pass the previously rotated map for subsequent iterations.
                 rotatedTileArray = this.rotateHexGrid(rotatedTileArray);
+                console.log(i);
+                console.log(rotatedTileArray);
             }
 
             // Rotate the hyperlane tiles so that connections are preserved.
             rotatedTileArray = this.rotateHyperlaneTiles(rotatedTileArray);
         }
 
+        console.log(rotatedTileArray);
         return rotatedTileArray;
     }
 
