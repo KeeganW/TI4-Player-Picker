@@ -547,7 +547,6 @@ class MapOptions extends React.Component {
         }, () => {
             this.props.updateTiles(this.getNewTileSet(), this.encodeSettings(), true);
         });
-
     }
 
     /**

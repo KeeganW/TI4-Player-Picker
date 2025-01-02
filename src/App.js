@@ -306,7 +306,9 @@ class App extends React.Component {
      * @returns {number[]} the clean tile string
      */
     removeTrailing(tiles) {
-        while(tiles[tiles.length - 1] === -1){
+        // Keep tile array length a minimun of 37 in order to support small maps
+        // Specifically rotation capabilities require the correct array length
+        while(tiles[tiles.length - 1] === -1 && tiles.length > 37 ){
             tiles.pop();
         }
         return tiles;
@@ -403,12 +405,10 @@ class App extends React.Component {
     
     updateWormholeOverlays(showTiles) {
         // Toggle the tile overlays
-        console.log(this.state.tiles)
         for (let tileNumber = 0; tileNumber < boardData.pokSize; tileNumber++) {
             let wormholeOverlay = $("#wormhole-" + tileNumber);
             if (showTiles) {
                 // Want to show all the tiles
-                console.log(this.state.tiles[tileNumber])
                 if (
                     tileData.all[this.state.tiles[tileNumber]]
                     &&
@@ -755,11 +755,10 @@ class App extends React.Component {
                 if ((rotatedTileArray[i] && rotatedTileArray[j]) && 
                     (rotatedTileArray[i].toString().split('-')[0] ===
                     rotatedTileArray[j].toString().split('-')[0])) {
-                        rotatedTileArray[j] = undefined;
+                        rotatedTileArray[j] = -1;
                     }
             }
         }
-        console.log(rotatedTileArray);
 
         return rotatedTileArray;
     }
@@ -794,8 +793,6 @@ class App extends React.Component {
      * Returns a rotated version of the current map.
      */
     generateRotatedMap(rotations = 1) {
-        console.log("Initial map");
-        console.log(this.state.tiles);
         let rotatedTileArray = [];
 
         // Rotate the hex grid the required number of times.
@@ -806,15 +803,12 @@ class App extends React.Component {
             } else {
                 // Pass the previously rotated map for subsequent iterations.
                 rotatedTileArray = this.rotateHexGrid(rotatedTileArray);
-                console.log(i);
-                console.log(rotatedTileArray);
             }
 
             // Rotate the hyperlane tiles so that connections are preserved.
             rotatedTileArray = this.rotateHyperlaneTiles(rotatedTileArray);
         }
 
-        console.log(rotatedTileArray);
         return rotatedTileArray;
     }
 
